@@ -31,14 +31,15 @@ def inst_profile(tt):
     fl = 0.020 + 0.015*np.tan(th)
     return fg, fl
 
-def pattern(refls, D_nm=None, eps=0.0, tt=np.arange(10,125,0.02), scale=2e4, bg=150, seed=0, lam2=True):
+def pattern(refls, D_nm=None, eps=0.0, tt=np.arange(10,125,0.02), scale=2e4, bg=150, seed=0, lam2=True, asym=0.0):
     rng = np.random.default_rng(seed)
     y = np.full_like(tt, bg, dtype=float) + 30*np.exp(-(tt-10)/30)
     truth = []
     for pos, mult in refls:
         th = np.radians(pos/2)
         fg_i, fl_i = inst_profile(pos)
-        fl_s = np.degrees(K_TRUE*LAM1/(D_nm*np.cos(th))) if D_nm else 0.0   # Lorentzian size
+        Dv = D_nm(pos) if callable(D_nm) else D_nm
+        fl_s = np.degrees(K_TRUE*LAM1/(Dv*np.cos(th))) if Dv else 0.0   # Lorentzian size
         fg_s = np.degrees(4*eps*np.tan(th))                                   # Gaussian strain
         fg = np.sqrt(fg_i**2 + fg_s**2); fl = fl_i + fl_s
         amp = scale*mult/(np.sin(th)**2*np.cos(th))*np.exp(-2*(np.sin(th)/LAM1)**2*0.01)/50
@@ -46,8 +47,10 @@ def pattern(refls, D_nm=None, eps=0.0, tt=np.arange(10,125,0.02), scale=2e4, bg=
         comps = [(pos, 1.0, LAM1)]
         if lam2:
             p2 = np.degrees(2*np.arcsin(np.sin(th)*LAM2/LAM1)); comps.append((p2, R21, LAM2))
+        a = asym(pos) if callable(asym) else asym      # axial-divergence-like low-angle tail
         for p, r, _ in comps:
-            y += amp*r*voigt_profile(tt-p, sig, gam)*0.05
+            sc = np.where(tt < p, 1.0 + a, 1.0 - a)     # split profile: area, height and FWHM unchanged
+            y += amp*r*voigt_profile((tt-p)/sc, sig, gam)*0.05
         truth.append(dict(tt=pos, fwhm_tot=voigt_fwhm(fg,fl), fwhm_inst=voigt_fwhm(fg_i,fl_i),
                           fl_size=fl_s, fg_strain=fg_s))
     y = rng.poisson(np.maximum(y,0)).astype(float)
@@ -55,3 +58,11 @@ def pattern(refls, D_nm=None, eps=0.0, tt=np.arange(10,125,0.02), scale=2e4, bg=
 
 LAB6 = lambda: refl_cubic(0.415689, lambda h,k,l: True)
 CEO2 = lambda: refl_cubic(0.54113, lambda h,k,l: (h%2==k%2==l%2))
+
+
+def write_xy(path, tt, y, header=None):
+    with open(path, "w") as f:
+        if header:
+            f.write(f"# {header}\n")
+        for a, b in zip(tt, y):
+            f.write(f"{a:.4f} {b:.1f}\n")

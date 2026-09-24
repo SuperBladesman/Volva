@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "volva"
+version = "4.1.2"
+description = "XRD crystallite size and microstrain analysis with Voigt-based instrumental correction"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "N. Reeves-McLaren, University of Sheffield" }]
+dependencies = [
+    "numpy>=1.22",
+    "scipy>=1.9",
+    "matplotlib>=3.5",
+    "lmfit>=1.1",
+    "PySide6>=6.4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+build = ["pyinstaller>=6"]
+
+[project.scripts]
+volva-cli = "volva.cli:main"
+
+[project.gui-scripts]
+volva = "volva.gui.app:main"
+
+[tool.setuptools]
+packages = ["volva", "volva.gui"]
+
+[tool.setuptools.package-data]
+"volva.gui" = ["volva.ico"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
