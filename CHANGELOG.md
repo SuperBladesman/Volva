@@ -9,6 +9,7 @@ Preparation for the first public release. No change to any result.
 - Continuous integration: the tests, the offscreen GUI smoke test and the command line on Linux, Windows and macOS, under Python 3.11 to 3.13, and on Windows with the versions pinned in `requirements.txt`.
 - `CONTRIBUTING.md`, issue templates, `CITATION.cff` and `.zenodo.json`.
 - `docs/HISTORY.md` explains how the history before this release was rebuilt.
+- `tests/test_release.py` checks that every copy of the version string agrees; `tools/bump_version.py` sets them for a release.
 
 ### Thresholds
 - Every default in `constants.py` is marked as sourced (with its reference) or unsourced (with what it was set on), and the README tabulates them. `docs/THRESHOLDS.md` lists, marked the same way, the thresholds still written into the code.
@@ -18,7 +19,7 @@ Preparation for the first public release. No change to any result.
 - `requires-python` is now 3.11, the oldest version tested.
 
 ### Documentation
-- README rewritten for the public repository: installation with pip, a check on the synthetic examples, the command line and the Python interface. Corrected: 48 tests (not 42), and asymmetry is fitted (split pseudo-Voigts, from 4.1.1), so the limitation that said it was not modelled has gone.
+- README rewritten for the public repository: installation with pip, a check on the synthetic examples, the command line and the Python interface. Corrected: 4.1.2 had 48 tests, not 42 (there are now 50), and asymmetry is fitted (split pseudo-Voigts, from 4.1.1), so the limitation that said it was not modelled has gone.
 
 
 ## 4.1.2: 24 September 2026

@@ -195,7 +195,7 @@ The reference values in the same file are sourced: X-ray wavelengths from *Inter
 
 ## Tests
 
-`python -m pytest` runs 48 tests, in under a minute on a laptop:
+`python -m pytest` runs 50 tests, in under a minute on a laptop:
 
 - **Profile mathematics:** FWHM = 2σ for lmfit's pseudo-Voigt; TCH round trip; Voigt integral breadth against numerical integration; split pseudo-Voigt area and FWHM.
 - **File formats:** headers, comma decimals, delimiters, XRDML with wavelength.
