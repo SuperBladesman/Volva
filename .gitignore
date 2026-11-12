@@ -1,6 +1,37 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
 build/
 dist/
 .pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Your own patterns, profiles and results stay on your machine
 volva_results/
+results/
+*.xrdml
+*.raw
+*.brml
+*.xy
+*.xye
+*_session.json
+*_report.txt
+*_peaks.csv
+*_summary.csv
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# The synthetic examples are kept
+!examples/*.xy
