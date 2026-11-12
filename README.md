@@ -7,7 +7,7 @@
 ![Version 4.1.2](https://img.shields.io/badge/version-4.1.2-green.svg)
 [![tests](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml/badge.svg)](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml)
 
-Most crystallite sizes in the literature come from the Scherrer equation, with the instrument's contribution taken off by subtracting full widths in quadrature. For Voigt-shaped peaks that shortcut is wrong. Völva's own 4.0 notebook used it, and on synthetic patterns it underestimated 20–200 nm crystallites by 7–35 %; it also reported 2 µm crystallites as 124 nm. A size beyond the resolution of the instrument is not a size.
+Most crystallite sizes in the literature come from the Scherrer equation, with the instrument's contribution taken off by subtracting full widths in quadrature. For Voigt-shaped peaks that shortcut is wrong. Völva's own 4.0 notebook used it, and on synthetic patterns it underestimated 20–200 nm crystallites by 7–35 %. For 2 µm crystallites it flagged every peak as resolution-limited, then still averaged them into a size of 124 nm. A size beyond the resolution of the instrument is not a size.
 
 Völva fits every reflection as a pseudo-Voigt Kα₁ + Kα₂ doublet, removes a measured instrument profile component by component (Gaussian widths in quadrature, Lorentzian widths linearly) and runs six methods on what is left. It then says where the methods agree, which of their assumptions the data contradict, and when the honest answer is only a bound. It is a desktop application (PySide6), a command line and a Python package.
 
@@ -90,7 +90,7 @@ volva-cli calibrate LaB6_scan.xy -o my_instrument_Cu.json --note "Cu, 1/4° dive
 volva-cli analyse data/*.xy --profile my_instrument_Cu.json -o results
 ```
 
-`volva-cli calibrate --help` and `volva-cli analyse --help` list the options, which match the settings below.
+`volva-cli calibrate --help` and `volva-cli analyse --help` list the options. Radiation, Kα₂, size convention, background width, detection threshold and minimum R² can be set there; the resolution limit only in the application and from Python, for now.
 
 ### From Python
 
@@ -105,7 +105,7 @@ for key, m in result.methods.items():
     print(m.name, m.size_nm, m.strain)
 ```
 
-`calibrate_from_standard` builds a profile from a standard pattern, `AnalysisSettings` has the settings, and `rerun_methods` repeats the methods after peaks are deselected or labelled.
+`calibrate_from_standard(pattern, wavelength)` builds a profile from a standard pattern and returns it with its log, the fits and the background; `AnalysisSettings` has the settings; `rerun_methods` repeats the methods after peaks are deselected or labelled.
 
 ### Windows: a conda environment, or a stand-alone app
 
