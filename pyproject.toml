@@ -7,7 +7,7 @@ name = "volva"
 version = "4.1.2"
 description = "XRD crystallite size and microstrain analysis with Voigt-based instrumental correction"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [{ name = "N. Reeves-McLaren, University of Sheffield" }]
 dependencies = [
     "numpy>=1.22",
