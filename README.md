@@ -195,12 +195,14 @@ The reference values in the same file are sourced: X-ray wavelengths from *Inter
 
 ## Tests
 
-`python -m pytest` runs 50 tests, in under a minute on a laptop:
+`python -m pytest` runs 52 tests, in under a minute on a laptop:
 
 - **Profile mathematics:** FWHM = 2σ for lmfit's pseudo-Voigt; TCH round trip; Voigt integral breadth against numerical integration; split pseudo-Voigt area and FWHM.
 - **File formats:** headers, comma decimals, delimiters, XRDML with wavelength.
 - **Method algebra:** exact recovery from noise-free breadths; SSP ≡ Halder–Wagner.
 - **End-to-end recovery** from synthetic patterns (true Voigt convolution, Kα doublet, Poisson noise).
+- **Command line:** calibration and analysis of the examples, with output encoded as UTF-8 and as cp1252 (what Windows gives a pipe or a file).
+- **Release:** every copy of the version string agrees.
 
 `tests/gui_smoke.py` drives the application without a display (`QT_QPA_PLATFORM=offscreen`): it loads the example profile and pattern, runs an analysis, deselects a peak and re-runs. Continuous integration runs both on Linux, Windows and macOS.
 

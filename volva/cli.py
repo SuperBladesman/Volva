@@ -130,7 +130,25 @@ def build_parser():
     return p
 
 
+def _safe_streams():
+    """Never crash on a character the output cannot encode.
+
+    On Windows, output sent to a pipe or a file is encoded as cp1252 by default,
+    which has no →, ≈ or η. Files and pipes get UTF-8; a console keeps its own
+    encoding and shows anything it cannot encode as "?".
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            if stream.isatty():
+                stream.reconfigure(errors="replace")
+            else:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError, OSError):
+            pass
+
+
 def main(argv=None):
+    _safe_streams()
     warnings.filterwarnings("ignore", category=UserWarning, module="uncertainties")
     argv = sys.argv[1:] if argv is None else argv
     if not argv:

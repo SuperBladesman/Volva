@@ -4,6 +4,9 @@
 
 Preparation for the first public release. No change to any result.
 
+### Fixed
+- The command line crashed on Windows when its output went to a file or a pipe, which Windows encodes as cp1252: the calibration log and the progress lines contain →, ≈ and η. Output to files and pipes is now UTF-8, and a console shows any character it cannot encode as "?". `tests/test_cli.py` runs the command line under both encodings.
+
 ### Repository
 - MIT licence (Nik Reeves-McLaren, University of Sheffield).
 - Continuous integration: the tests, the offscreen GUI smoke test and the command line on Linux, Windows and macOS, under Python 3.11 to 3.13, and on Windows with the versions pinned in `requirements.txt`.
@@ -19,7 +22,7 @@ Preparation for the first public release. No change to any result.
 - `requires-python` is now 3.11, the oldest version tested.
 
 ### Documentation
-- README rewritten for the public repository: installation with pip, a check on the synthetic examples, the command line and the Python interface. Corrected: 4.1.2 had 48 tests, not 42 (there are now 50), and asymmetry is fitted (split pseudo-Voigts, from 4.1.1), so the limitation that said it was not modelled has gone.
+- README rewritten for the public repository: installation with pip, a check on the synthetic examples, the command line and the Python interface. Corrected: 4.1.2 had 48 tests, not 42 (there are now 52), and asymmetry is fitted (split pseudo-Voigts, from 4.1.1), so the limitation that said it was not modelled has gone.
 
 
 ## 4.1.2: 24 September 2026
