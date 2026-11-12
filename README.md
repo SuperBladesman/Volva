@@ -176,15 +176,15 @@ Every default in `volva/constants.py` is marked there as sourced, with its refer
 
 | Constant | Value | What it decides | Source |
 |---|---|---|---|
-| `DEFAULT_MIN_R2` | 0.90 | Minimum R² to accept a sample peak | Unsourced: 0.8 in 3.x, 0.65 in 4.0, 0.90 from 4.1; no measurement recorded |
-| `DEFAULT_STD_MIN_R2` | 0.95 | Minimum R² to accept a standard peak | Unsourced: stricter than for samples because standard peaks are strong (4.0 used 0.8) |
+| `DEFAULT_MIN_R2` | 0.90 | Minimum R² to accept a sample peak | Unsourced: 0.8 in volva-xrd, 0.65 in 4.0, 0.90 from 4.1; no measurement recorded |
+| `DEFAULT_STD_MIN_R2` | 0.95 | Minimum R² to accept a standard peak | Unsourced: stricter than for samples because standard peaks are strong (4.0 used 0.7) |
 | `DEFAULT_PROMINENCE_SIGMA` | 5σ | Detection: net area above a local baseline over the local counting noise | Unsourced: 4.0's 5σ height test, redefined in 4.1.2; on four real patterns 3σ and 5σ selected the same peaks |
 | `MIN_AMPLITUDE_SIGNIFICANCE` | 3 | A fitted peak with area below 3 standard errors is spurious and removed from its group | Unsourced (4.1.2) |
 | `MIN_AREA_SIGNIFICANCE_ACCEPT` | 5 | An accepted peak needs a fitted area of at least 5 standard errors | Unsourced: equal to the detection default |
 | `MIN_FWHM_FRACTION_OF_INSTRUMENT` | 0.7 | A sample peak narrower than 0.7 × the instrument FWHM is noise or a spike | Unsourced: the physical limit is 1; no measurement recorded for the margin |
 | `MAX_CHI2_RED_WEAK` | 1.5 | A fit with χ²ν at or below this is adequate even if R² is low | Unsourced: residuals within counting noise give χ²ν ≈ 1 |
-| `DEFAULT_MIN_REL_HEIGHT` | 0.01 | Detection floor, as a fraction of the strongest peak | Unsourced: 4.0's default threshold, kept as a floor |
-| `DEFAULT_RESOLUTION_RATIO` | 1.2 | β_obs/β_inst below this: near the resolution limit | Unsourced: introduced in 3.1 (November 2025) as "sample width < 20 % of instrumental" |
+| `DEFAULT_MIN_REL_HEIGHT` | 0.01 | Detection floor, as a fraction of the strongest peak; the 5σ test does the real work | Unsourced: 4.0 detected at 0.05; no measurement recorded for 0.01 |
+| `DEFAULT_RESOLUTION_RATIO` | 1.2 | β_obs/β_inst below this: near the resolution limit. It sets the largest measurable size, and if more than half the reflections are near the limit or unresolved, only a 2σ lower bound is reported | Unsourced: introduced in 3.1 (November 2025) as "sample width < 20 % of instrumental" |
 | `DEFAULT_MC_SAMPLES` | 2000 | Monte Carlo draws for the uncertainties | Unsourced: no convergence study recorded |
 | `MIN_PEAKS_LINEAR`, `MIN_PEAKS_MONSHI` | 3 | Fewest reflections for the linear methods | Unsourced: the fewest that leave one degree of freedom for a straight line |
 | `BG_MIN_HALF_WIDTH`, `BG_MAX_HALF_WIDTH`, `BG_WIDTH_FACTOR` | 0.8°, 6.0°, 2.5 | SNIP half-width: 2.5 × the 75th-percentile FWHM, within 0.8–6.0° | SNIP is sourced (Ryan *et al.* 1988); the limits and factor are unsourced (4.1.0) |

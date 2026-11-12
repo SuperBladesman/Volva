@@ -14,6 +14,7 @@ This list was taken from 4.1.2. Moving the ones that decide results into `consta
 | 0.35 × the Kα₁–Kα₂ separation (at least 2 steps), and 0.85 × the height | `peaks.py`, `_drop_ka2` | A weaker detection at the Kα₂ position of a peak is that peak's Kα₂ line, not a reflection | Unsourced (4.1.0, audit item M1) |
 | η ≤ 0.005 or ≥ 0.995 | `peaks.py`, `_fit_once`; also `instrument.py` and `diagnostics.py` | η is at a bound, and so not determined | Unsourced |
 | Width within 1 % of a fitting bound | `peaks.py`, `_fit_once` | The fit is rejected (`width_at_bound`) | Unsourced |
+| Fitting bounds: centre within ±(0.6 × the estimated FWHM + 2 steps); σ up to 6 × the estimated FWHM (at least 5 steps); skew within ±0.7 | `peaks.py`, `_fit_once` | Where a fit may go; a width that ends on its bound is rejected, as above | Unsourced |
 | Another peak within 1.5 × FWHM | `peaks.py`, `_fit_once` | The peak is flagged as overlapped | Unsourced |
 | 0.05 | `peaks.py`, `_fit_once`; `correction.py`, `correct_peaks` | The uncertainty given to η when it is fixed at a bound | Unsourced |
 | 5 % of the FWHM and 0.08 in η | `correction.py`, `correct_peaks` | The fit uncertainties assumed when a fit returns no covariance (flagged `assumed_fit_uncertainty`) | Unsourced |
@@ -25,6 +26,8 @@ This list was taken from 4.1.2. Moving the ones that decide results into `consta
 | Value | Where | What it decides | Source |
 |---|---|---|---|
 | 4 × the scaled median absolute deviation, up to three rounds | `instrument.py`, `calibrate_from_standard` | A standard peak this far from the Caglioti curve is left out of the profile | Unsourced |
+| Detection at 10σ and at 0.005 of the strongest peak | `instrument.py`, `calibrate_from_standard` | Standard peaks are detected more strictly than sample peaks (5σ and 0.01, the defaults in `constants.py`) | Unsourced |
+| Overlapped standard peaks | `instrument.py`, `calibrate_from_standard` | A standard peak flagged as overlapped is left out of the profile | Unsourced |
 | Slope > 2 standard errors | `instrument.py`, `calibrate_from_standard` | A linear trend in η is kept; otherwise η is constant | Unsourced (statistical convention, about 95 %) |
 | 0.02 | `instrument.py`, `calibrate_from_standard` | The smallest uncertainty allowed for the η of a standard peak | Unsourced |
 | FWHM scatter > 10 % of the median width; median FWHM < 3 steps; η scatter > 0.08, or two or more peaks at a bound | `instrument.py`, `calibrate_from_standard` | Calibration warnings. The advice given, a step of at most FWHM/5, is also unsourced | Unsourced |
@@ -45,13 +48,18 @@ This list was taken from 4.1.2. Moving the ones that decide results into `consta
 | Most reflections strained, mean > 2 standard errors, and CV < 50 % | `methods.py`, `single_line` | Single-line strain is significant | Unsourced |
 | \|t\| > 2 for slope − 1 | `methods.py`, `monshi` | The Monshi slope differs from 1, so broadening is not size-only and the Monshi size is not used | Unsourced (statistical convention) |
 | \|slope\| ≤ 2σ | `methods.py`, `_strain_from_slope` | A linear-method strain is not significant and is reported as an upper limit (slope + 2σ) | Unsourced (statistical convention) |
+| Intercept > 2σ (Williamson–Hall, Voigt Williamson–Hall), slope > 2σ (Halder–Wagner) | `methods.py`, `_size_from_intercept`, `halder_wagner` | A size is given; otherwise only a lower bound | Unsourced (statistical convention) |
+| Intercept > 2σ (Halder–Wagner) | `methods.py`, `halder_wagner` | Halder–Wagner strain is significant; otherwise an upper limit | Unsourced (statistical convention) |
 
 ## Interpretation
 
 | Value | Where | What it decides | Source |
 |---|---|---|---|
 | 4e tan θ ≥ 15 % of the sample breadth, over the three highest-angle reflections | `diagnostics.py`, `_interpret` | A significant strain is also material; otherwise it is treated as negligible | Unsourced |
+| Material strain in none, or at most 25 %, of the tests: not resolved; in more than 50 %: resolved; otherwise inconsistent | `diagnostics.py`, `_interpret` | Whether the headline is Scherrer or a size–strain method | Unsourced |
+| More than half the reflections near the resolution limit or unresolved | `diagnostics.py`, `_interpret` | The headline is a 2σ lower bound and no mean is reported | Unsourced |
 | Strain > 2 × (statistical ⊕ calibration uncertainty) | `pipeline.py`, `_systematic` | A strain survives the calibration systematic; otherwise it is an upper limit | Unsourced (statistical convention) |
+| 200 Monte Carlo draws | `pipeline.py`, `_systematic` | The re-runs with the instrument profile shifted by ±1σ use 200 draws, not `DEFAULT_MC_SAMPLES` | Unsourced |
 | r < −0.5 and p < 0.05 | `diagnostics.py`, `_interpret` | Scherrer sizes fall with angle, which counts as evidence of strain | Unsourced |
 | CV > 20 % and χ² p < 0.01 over at least three reflections; with four or more, it must survive removal of the most deviant one | `diagnostics.py`, `_interpret` | The sample is reported as anisotropic | Unsourced (4.1.0; the single-reflection check 4.1.1) |
 | Fewer than two reflections, or fewer than half of them, with η free and σ(η) < 0.25 | `diagnostics.py`, `_interpret` | The Gaussian/Lorentzian split is not determined, so single-line Voigt and Voigt Williamson–Hall are not used | Unsourced (4.1.2) |

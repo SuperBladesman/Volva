@@ -54,13 +54,14 @@ DEFAULT_STANDARD = "LaB6 (NIST SRM 660c)"
 # here, are listed in docs/THRESHOLDS.md.
 # ---------------------------------------------------------------------------
 
-# UNSOURCED. 0.8 in 3.x, 0.65 in 4.0, 0.90 from 4.1; no measurement or
-# reference is recorded for the value. Weak peaks with a lower R² are still
-# accepted if their residuals are within counting noise (MAX_CHI2_RED_WEAK).
+# UNSOURCED. 0.8 in volva-xrd (3.x defined 0.8 but did not apply it), 0.65 in
+# 4.0, 0.90 from 4.1; no measurement or reference is recorded for the value.
+# Weak peaks with a lower R² are still accepted if their residuals are within
+# counting noise (MAX_CHI2_RED_WEAK).
 DEFAULT_MIN_R2 = 0.90            # minimum R^2 for an accepted sample peak fit
 
 # UNSOURCED. Stricter than for samples because standard peaks are strong
-# (4.0 used 0.8); no measurement or reference is recorded for the value.
+# (4.0 used 0.7); no measurement or reference is recorded for the value.
 DEFAULT_STD_MIN_R2 = 0.95        # minimum R^2 for an accepted standard peak
 
 # UNSOURCED. 4.0 required a 5σ height-to-noise ratio; 4.1.2 made the test the
@@ -87,15 +88,19 @@ MIN_FWHM_FRACTION_OF_INSTRUMENT = 0.7  # sample peaks narrower than this x instr
 # chi-square near 1; 1.5 is the margin allowed. No measurement is recorded.
 MAX_CHI2_RED_WEAK = 1.5         # a fit with residuals within counting noise is adequate even if R² is low
 
-# UNSOURCED. The default detection threshold of 4.0, as a fraction of the
-# strongest peak, kept as a floor.
+# UNSOURCED. A floor for detection, as a fraction of the strongest peak; the
+# 5σ significance test above does the real work. 4.0 detected at 0.05 of the
+# maximum (its introduction said 0.01). No measurement is recorded for 0.01.
 DEFAULT_MIN_REL_HEIGHT = 0.01    # detection floor, fraction of the strongest peak
 
 # UNSOURCED. Introduced in 3.1 (November 2025) as "sample width < 20 % of
-# instrumental" and kept since. It flags reflections as near the limit and
-# sets the measurable range; whether a reflection gives a size or only a lower
-# bound is decided by a 2σ test on its sample breadth (correction.py).
-DEFAULT_RESOLUTION_RATIO = 1.2   # beta_obs / beta_inst below this -> resolution-limited
+# instrumental" and kept since. A reflection below it is flagged as near the
+# resolution limit, and the ratio sets the largest measurable size. If more
+# than half the reflections are near the limit or unresolved, the headline
+# becomes a 2σ lower bound and no mean is reported (diagnostics.py). Whether a
+# single reflection gives a size or only a bound is decided separately, by a
+# 2σ test on its sample breadth (correction.py).
+DEFAULT_RESOLUTION_RATIO = 1.2   # beta_obs / beta_inst below this -> near the resolution limit
 
 # UNSOURCED. No convergence study is recorded for the number of draws.
 DEFAULT_MC_SAMPLES = 2000        # Monte Carlo draws for uncertainty propagation
@@ -114,7 +119,7 @@ MIN_PEAKS_MONSHI = 3
 # when the width moved from points to degrees (audit item C5).
 BG_MIN_HALF_WIDTH = 0.8
 BG_MAX_HALF_WIDTH = 6.0
-BG_WIDTH_FACTOR = 2.5            # half-width = factor x widest typical FWHM
+BG_WIDTH_FACTOR = 2.5            # half-width = factor x 75th-percentile FWHM of the strongest peaks
 
 # UNSOURCED. A relative uncertainty of 3 % of the instrument Gaussian and
 # Lorentzian widths, added in quadrature to the uncertainty from the
