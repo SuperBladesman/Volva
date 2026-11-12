@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+Preparation for the first public release. No change to any result.
+
+### Repository
+- MIT licence (Nik Reeves-McLaren, University of Sheffield).
+- Continuous integration: the tests, the offscreen GUI smoke test and the command line on Linux, Windows and macOS, under Python 3.11 to 3.13, and on Windows with the versions pinned in `requirements.txt`.
+- `CONTRIBUTING.md`, issue templates, `CITATION.cff` and `.zenodo.json`.
+- `docs/HISTORY.md` explains how the history before this release was rebuilt.
+
+### Thresholds
+- Every default in `constants.py` is marked as sourced (with its reference) or unsourced (with what it was set on), and the README tabulates them. `docs/THRESHOLDS.md` lists, marked the same way, the thresholds still written into the code.
+- The comment on `INST_REL_UNC_FLOOR` was wrong: the 3 % is added in quadrature to the calibration uncertainty in every case, not only when the calibration residuals are smaller.
+
+### Packaging
+- `requires-python` is now 3.11, the oldest version tested.
+
+### Documentation
+- README rewritten for the public repository: installation with pip, a check on the synthetic examples, the command line and the Python interface. Corrected: 48 tests (not 42), and asymmetry is fitted (split pseudo-Voigts, from 4.1.1), so the limitation that said it was not modelled has gone.
+
+
 ## 4.1.2: 24 September 2026
 
 Prompted by slow, noise-dominated analyses of four real laboratory patterns run at a 3σ detection threshold.
