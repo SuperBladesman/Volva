@@ -1,0 +1,4 @@
+# Keep the Windows scripts exactly as written (CRLF line endings)
+*.bat -text
+*.ps1 -text
+*.iss -text
