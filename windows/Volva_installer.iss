@@ -1,8 +1,8 @@
 ; Inno Setup script for Volva 4.1 (https://jrsoftware.org/isinfo.php, free).
-; Produces a single Volva_4.1.2_Setup.exe that installs per user (no admin
+; Produces a single Volva_4.1.3_Setup.exe that installs per user (no admin
 ; rights needed), adds desktop and Start menu shortcuts and an uninstaller.
 ; build_windows.bat compiles this automatically if Inno Setup 6 is installed.
-#define AppVer "4.1.2"
+#define AppVer "4.1.3"
 #ifndef DistDir
   #define DistDir "..\dist\Volva"
 #endif

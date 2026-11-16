@@ -4,7 +4,7 @@
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)
-![Version 4.1.2](https://img.shields.io/badge/version-4.1.2-green.svg)
+![Version 4.1.3](https://img.shields.io/badge/version-4.1.3-green.svg)
 [![tests](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml/badge.svg)](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml)
 
 Most crystallite sizes in the literature come from the Scherrer equation, with the instrument's contribution taken off by subtracting full widths in quadrature. For Voigt-shaped peaks that shortcut is wrong. Völva's own 4.0 notebook used it, and on synthetic patterns it underestimated 20–200 nm crystallites by 7–35 %. For 2 µm crystallites it flagged every peak as resolution-limited, then still averaged them into a size of 124 nm. A size beyond the resolution of the instrument is not a size.
@@ -131,7 +131,7 @@ This runs the tests and builds the app with PyInstaller, which takes a few minut
 
 - `dist\Volva\Volva.exe` is the application. Double-click it to check it works.
 - `dist\Volva\Create desktop shortcut.bat` adds Völva to the desktop and the Start menu.
-- `Volva_4.1.2_Setup.exe` is a single-file installer, built only if the free [Inno Setup 6](https://jrsoftware.org/isinfo.php) is installed. It installs per user, needs no administrator rights, and creates desktop and Start-menu shortcuts and an uninstaller.
+- `Volva_4.1.3_Setup.exe` is a single-file installer, built only if the free [Inno Setup 6](https://jrsoftware.org/isinfo.php) is installed. It installs per user, needs no administrator rights, and creates desktop and Start-menu shortcuts and an uninstaller.
 
 To put it on another PC, run the installer there, or copy the whole `dist\Volva` folder (*e.g.* to `C:\Users\<name>\AppData\Local\Programs\Volva`) and double-click *Create desktop shortcut.bat* inside it. The executable is not code-signed, so Windows SmartScreen may say "Windows protected your PC": choose *More info → Run anyway*. On managed PCs, IT may need to allow it. The first start takes 10–20 s.
 
@@ -232,7 +232,7 @@ Each is, or will be, an open issue.
 
 ## Versions
 
-The current version is **4.1.2**. [CHANGELOG.md](CHANGELOG.md) describes each change from 4.1.0, the rebuild of the 4.0 notebook as a package. The history in this repository before the first public release was rebuilt from dated copies of earlier versions, from the 1.1 desktop app of August 2025; [docs/HISTORY.md](docs/HISTORY.md) explains how, and what is missing.
+The current version is **4.1.3**. [CHANGELOG.md](CHANGELOG.md) describes each change from 4.1.0, the rebuild of the 4.0 notebook as a package. The history in this repository before the first public release was rebuilt from dated copies of earlier versions, from the 1.1 desktop app of August 2025; [docs/HISTORY.md](docs/HISTORY.md) explains how, and what is missing.
 
 ## Citing Völva
 
