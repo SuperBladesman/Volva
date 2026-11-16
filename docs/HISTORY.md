@@ -4,19 +4,19 @@ Völva was not under version control before this repository. Each version was ke
 
 The commits after 4.1.2 prepare the first public release (the licence, the README, the threshold marks, continuous integration, the citation files and this document). They were made before the first push.
 
-Nothing in the repository was public before it was first pushed to GitHub, on FIRST_PUSH_DATE. Its open development, issues, pull requests and releases date from then.
+Nothing in the repository was public before it was first pushed to GitHub, on 16th November 2026. Its open development, issues, pull requests and releases date from then.
 
 ## Sources
 
 | Version | Surviving copy | Last saved |
 |---|---|---|
-| 1.1 | `Volva 1.1 - Crystallite Size and Strain Analysis.ipynb` (description only) and `Völva - Crystallite Size and Strain Analysis Tool.ipynb` (description and code) | 19 August 2025 and 6 November 2025 |
-| volva-xrd | the `volva-xrd` folder, a package | 2 to 5 September 2025 |
-| 3.0 | `Volva_3.ipynb` | 6 November 2025 |
-| 3.1 | `Volva_3.1.ipynb` | 7 November 2025 |
-| 4.0 | `Volva 4.0.ipynb` | 24 September 2026, 09:57 |
-| Audit of 4.0 | `Volva_4_0_audit_tests.zip`, the test scripts of the audit | 24 September 2026, 10:09 |
-| 4.1.2 | the `Volva_4_1` folder, a package | 24 September 2026, 16:28 |
+| 1.1 | `Volva 1.1 - Crystallite Size and Strain Analysis.ipynb` (description only) and `Völva - Crystallite Size and Strain Analysis Tool.ipynb` (description and code) | 19th August 2025 and 6th November 2025 |
+| volva-xrd | the `volva-xrd` folder, a package | 2nd to 5th September 2025 |
+| 3.0 | `Volva_3.ipynb` | 6th November 2025 |
+| 3.1 | `Volva_3.1.ipynb` | 7th November 2025 |
+| 4.0 | `Volva 4.0.ipynb` | 24th September 2026, 09:57 |
+| Audit of 4.0 | `Volva_4_0_audit_tests.zip`, the test scripts of the audit | 24th September 2026, 10:09 |
+| 4.1.2 | the `Volva_4_1` folder, a package | 24th September 2026, 16:28 |
 
 Apart from 3.1, an edit of 3.0, each version was a rewrite of the one before: the 1.1 desktop app, the volva-xrd package, the 3.0 notebook (which reuses the package's class structure), the three-cell 4.0 notebook and the 4.1 package share little code with their predecessors. The diffs between them are therefore large, and say less than the commit messages.
 
@@ -24,7 +24,7 @@ Apart from 3.1, an edit of 3.0, each version was a rewrite of the one before: th
 
 Each commit carries the time its last file was saved, with one exception.
 
-The 1.1 code survives only in a copy saved on 6 November 2025, three minutes after 3.0. Its description cell is identical to the 1.1 notebook of 19 August 2025, which has that cell and nothing else, and it describes the same desktop app with two methods (3.0 has four). The commit is dated to the 1.1 notebook, and its message says that the code may include changes made up to 6 November.
+The 1.1 code survives only in a copy saved on 6th November 2025, three minutes after 3.0. Its description cell is identical to the 1.1 notebook of 19th August 2025, which has that cell and nothing else, and it describes the same desktop app with two methods (3.0 has four). The commit is dated to the 1.1 notebook, and its message says that the code may include changes made up to 6th November.
 
 ## The version numbers
 
@@ -33,7 +33,7 @@ The volva-xrd package of September 2025 calls itself 4.0.0 in its `__init__.py`.
 ## What is missing
 
 - Versions before 1.1 were not kept.
-- 4.1.0 and 4.1.1 were made on 24 September 2026, the same day as 4.1.2, and were not saved separately. `CHANGELOG.md` describes all three.
+- 4.1.0 and 4.1.1 were made on 24th September 2026, the same day as 4.1.2, and were not saved separately. `CHANGELOG.md` describes all three.
 - The written report of the audit of 4.0, whose item numbers (C1–C5, M1–M8) the 4.1.0 changelog entry uses, is not in the repository. Its test scripts are, in `audit/4.0/` in the commit before 4.1.2.
 
 ## What was changed for release
