@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.1.3: 16 November 2026
 
 Preparation for the first public release. No change to any result.
 

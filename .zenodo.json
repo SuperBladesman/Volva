@@ -1,6 +1,6 @@
 {
   "title": "Völva: crystallite size and microstrain from powder X-ray diffraction line broadening",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "upload_type": "software",
   "description": "<p>Völva measures crystallite size and microstrain from powder X-ray diffraction line broadening. It fits each reflection as a pseudo-Voigt Kα<sub>1</sub> + Kα<sub>2</sub> doublet, removes a measured instrument profile component by component (Gaussian widths in quadrature, Lorentzian widths linearly), and runs six methods (Scherrer, single-line Voigt, Monshi–Scherrer, Williamson–Hall, Voigt Williamson–Hall and Halder–Wagner) with Monte Carlo uncertainties. It reports where the methods agree, which of their assumptions the data contradict, and when a size is only a bound. It is a PySide6 desktop application, a command line and a Python package.</p><p>CHANGELOG.md describes every version.</p>",
   "creators": [

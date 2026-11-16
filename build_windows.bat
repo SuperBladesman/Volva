@@ -8,7 +8,7 @@ REM      build_windows.bat
 REM  Output goes to %USERPROFILE%\Volva_build (outside Google Drive):
 REM      dist\Volva\Volva.exe               the application folder
 REM      dist\Volva\Create desktop shortcut.bat
-REM      Volva_4.1.2_Setup.exe              installer (only if Inno Setup 6 is installed)
+REM      Volva_4.1.3_Setup.exe              installer (only if Inno Setup 6 is installed)
 REM =====================================================================
 cd /d "%~dp0"
 set OUT=%USERPROFILE%\Volva_build
@@ -30,7 +30,7 @@ set ISCC=
 if exist "%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" set ISCC=%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe
 if exist "%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe" set ISCC=%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe
 if defined ISCC (
-    "%ISCC%" /Q /DDistDir="%OUT%\dist\Volva" /O"%OUT%" "windows\Volva_installer.iss" && echo Installer: %OUT%\Volva_4.1.2_Setup.exe
+    "%ISCC%" /Q /DDistDir="%OUT%\dist\Volva" /O"%OUT%" "windows\Volva_installer.iss" && echo Installer: %OUT%\Volva_4.1.3_Setup.exe
 ) else (
     echo Inno Setup 6 not found - skipping the installer. The app folder is ready to use.
 )
