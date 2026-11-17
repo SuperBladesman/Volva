@@ -2,7 +2,7 @@
 
 Völva was not under version control before this repository. Each version was kept as a dated copy on the author's own storage, and the history here was rebuilt from those copies before the first push: one commit for every surviving version, in the order the versions were made, each dated by the last save of its files.
 
-The commits after 4.1.2 prepare the first public release (the licence, the README, the threshold marks, continuous integration, the citation files and this document). They were made before the first push.
+The commits after 4.1.2 prepare the first public release (the licence, the README, the threshold marks, continuous integration, the citation files and this document). They were made before the first push. Two of them change files in `volva/`: one fixes a crash of the command line on Windows when its output goes to a file or a pipe (`volva/cli.py`, with `tests/test_cli.py`), and one adds the sourced and unsourced marks to the comments in `volva/constants.py` without changing any value. `pyproject.toml` now requires Python 3.11. CHANGELOG.md lists them all under 4.1.3.
 
 Nothing in the repository was public before it was first pushed to GitHub, on 16th November 2026. Its open development, issues, pull requests and releases date from then.
 
@@ -51,4 +51,4 @@ Two files in 4.1.2 were edited, and the commit says so:
 - in `CHANGELOG.md`, five passages that gave the composition of four real laboratory patterns, and the date and some numbers of a real LaB₆ calibration, were replaced by general descriptions. The changes they record are unchanged;
 - in `tests/test_regression.py`, two sets of parameters that looked rounded from that calibration were replaced by made-up values: the asymmetry in `test_asymmetric_standard_calibrates_smoothly`, now 0.4 exp(−(2θ − 20)/30), and the profile in `test_eta_trend_not_extrapolated_and_bound_peaks_downweighted`, now U = 0.0044, V = −0.0013, W = 0.0039 and η = 0.49 + 0.003 × 2θ. Every test passed before and after the edit.
 
-No code in `volva/`, and nothing in any notebook's code cells, was changed.
+In rebuilding the history, no code in `volva/`, and nothing in any notebook's code cells, was changed.
