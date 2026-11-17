@@ -83,6 +83,8 @@ def text_report(res: AnalysisResult) -> str:
     it = res.interpretation
     if it:
         L.append("RESULT")
+        if it.verdict:
+            L.append(f"  {it.verdict}")
         L.append("  " + it.headline)
         L.append("")
         L.append("WHAT THE METHODS SAY TOGETHER")
@@ -260,6 +262,7 @@ def write_summary_csv(res: AnalysisResult, path: str):
         for h in _header_lines(res):
             f.write(f"# {h}\n")
         if res.interpretation:
+            f.write(f"# Verdict: {res.interpretation.verdict}\n")
             f.write(f"# Headline: {res.interpretation.headline}\n")
         w = csv.writer(f)
         w.writerow(["method", "success", "size_nm", "size_err_nm", "size_lower_bound_nm", "strain_percent",

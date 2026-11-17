@@ -5,6 +5,12 @@
 ### Added
 - **Methods text.** Edit ▸ Copy methods text (Ctrl+Shift+C) copies a Methods paragraph describing the analysis as run: the version and its DOI, the peak model and Kα2 handling, the background, the reflections used, the standard and the instrument model, how the instrument was removed, the size convention and K, the six methods, the Monte Carlo and calibration uncertainties, and which method the quoted value comes from, followed by the citation. The *Result* tab shows it, every export writes it as `<name>_methods.txt`, and `volva.report.methods_text(result)` returns it (#32).
 - `volva/citation.py` holds the DOI for all versions and the DOI of each release; the About box gives the citation.
+- **Verdict.** A few words above the headline say what kind of answer the analysis gives (size and strain resolved, size resolved, a lower bound only, anisotropic, approximate, or not reported), coloured by level. It is also the first line of the result in the text report, and a `# Verdict:` header line in the summary CSV (`Interpretation.verdict`, `verdict_level`) (#33).
+- Each tab carries a tooltip saying what it shows; the method tabs say what the method assumes (`volva.methods.ASSUMPTIONS`) (#33).
+- Alt+← and Alt+→ step through the reflections on the *Peak* tab, and moving through the peak table moves the *Peak* tab with it (#33).
+
+### Changed
+- Axis labels are written as quantity / unit (2θ / °, Size / nm, β cos θ / mrad), in place of quantity (unit) (#33).
 
 ### Repository
 - CI uses actions/checkout@v5 and actions/setup-python@v6, which run on Node.js 24; GitHub has deprecated Node.js 20 (#22).

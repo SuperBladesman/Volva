@@ -14,7 +14,7 @@ import warnings
 
 import numpy as np
 from PySide6.QtCore import QObject, QSettings, Qt, QThread, QTimer, Signal
-from PySide6.QtGui import QAction, QFontDatabase, QIcon, QKeySequence
+from PySide6.QtGui import QAction, QFontDatabase, QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout,
                                QGroupBox, QHBoxLayout, QHeaderView, QLabel, QLineEdit, QMainWindow,
                                QMessageBox, QPlainTextEdit, QProgressBar, QPushButton, QScrollArea, QSpinBox,
@@ -32,9 +32,29 @@ from .. import plots  # noqa: E402
 from ..instrument import InstrumentProfile, calibrate_from_standard  # noqa: E402
 from ..io import LoadError, load_pattern  # noqa: E402
 from ..pipeline import AnalysisSettings, rerun_methods, resolve_wavelength, run_analysis  # noqa: E402
-from ..methods import _bound  # noqa: E402
+from ..methods import ASSUMPTIONS, _bound  # noqa: E402
 from ..citation import citation  # noqa: E402
 from ..report import methods_text, text_report, write_bundle  # noqa: E402
+
+A = ASSUMPTIONS
+TAB_TIPS = {
+    "Result": "The verdict and headline, what the methods say together, and every method's result",
+    "Pattern": "The whole pattern with the background, the fitted profile and the peaks used",
+    "Peak": "One reflection at a time, with its fit and residuals. Alt+← and Alt+→ step through them; "
+            "so does moving through the peak table",
+    "Gallery": "Every fitted reflection at a glance",
+    "Instrument": "The instrument profile from the standard: width, shape and the sample/instrument breadth ratio",
+    "Size by reflection": f"Scherrer sizes (assumes {A['scherrer']}) and single-line Voigt sizes and strains "
+                          f"(assumes {A['single_line']}) for each reflection",
+    "Williamson-Hall": f"Williamson–Hall. Assumes {A['wh']}",
+    "Voigt W-H": f"Voigt Williamson–Hall. Assumes {A['voigt_wh']}",
+    "Halder-Wagner": f"Halder–Wagner. Assumes {A['hw']}",
+    "Monshi": f"Monshi–Scherrer. Assumes {A['monshi']}",
+    "Comparison": "Size and strain from every method side by side. Their assumptions differ, so agreement "
+                  "between them is informative",
+    "Report": "The full text report, as exported",
+    "Log": "What was done, step by step",
+}
 
 LEVEL_STYLE = {
     "critical": ("CRITICAL", "#b00020"),
@@ -293,8 +313,10 @@ class MainWindow(QMainWindow):
         nl = QHBoxLayout(nav)
         nl.setContentsMargins(0, 0, 0, 0)
         bp = QPushButton("◀")
+        bp.setToolTip("Previous reflection (Alt+←)")
         bp.clicked.connect(lambda: self._step_peak(-1))
         bn = QPushButton("▶")
+        bn.setToolTip("Next reflection (Alt+→)")
         bn.clicked.connect(lambda: self._step_peak(1))
         self.lbl_peak = QLabel("")
         for w in (bp, self.lbl_peak, bn):
@@ -315,7 +337,12 @@ class MainWindow(QMainWindow):
         self.txt_log = QPlainTextEdit(readOnly=True)
         self.txt_log.setFont(mono)
         self.tabs.addTab(self.txt_log, "Log")
+        for i in range(self.tabs.count()):
+            self.tabs.setTabToolTip(i, TAB_TIPS.get(self.tabs.tabText(i), ""))
         self.tabs.currentChanged.connect(self._tab_changed)
+        for key, d in (("Alt+Left", -1), ("Alt+Right", 1)):
+            QShortcut(QKeySequence(key), self, activated=lambda d=d: self._step_peak(d, show=True))
+        self.table.currentCellChanged.connect(self._table_current)
         self.statusBar().showMessage("Ready")
 
     @staticmethod
@@ -668,10 +695,25 @@ class MainWindow(QMainWindow):
         if self.result is not None:
             self._rerun_timer.start()
 
-    def _step_peak(self, d):
+    def _step_peak(self, d, show=False):
         if self.result and self.result.peaks:
             self.peak_index = int(np.clip(self.peak_index + d, 0, len(self.result.peaks) - 1))
+            if self.table.currentRow() != self.peak_index:
+                self._syncing = True
+                self.table.setCurrentCell(self.peak_index, max(self.table.currentColumn(), 0))
+                self._syncing = False
+            if show and self.tabs.currentWidget() is not self.plot_tabs["Peak"]:
+                self.tabs.setCurrentWidget(self.plot_tabs["Peak"])
             self._redraw_current()
+
+    def _table_current(self, row, *_):
+        """Moving through the peak table moves the Peak tab with it."""
+        if getattr(self, "_syncing", False) or not self.result or not (0 <= row < len(self.result.peaks)):
+            return
+        if row != self.peak_index:
+            self.peak_index = row
+            if self.tabs.currentWidget() is self.plot_tabs["Peak"]:
+                self._redraw_current()
 
     def _tab_changed(self, _):
         self._redraw_current()
@@ -705,7 +747,10 @@ class MainWindow(QMainWindow):
                 "recording every setting and file checksum.</li></ol>")
             return
         it = res.interpretation
+        vtag, vcol = LEVEL_STYLE.get(it.verdict_level, ("", "#333"))
         H = [f"<h2 style='margin-bottom:4px'>{html.escape(res.pattern.name)}</h2>",
+             f"<p style='font-size:17px;font-weight:bold;color:{vcol};margin:2px 0 6px 0'>"
+             f"{html.escape(it.verdict)}</p>" if it.verdict else "",
              f"<div style='border:1px solid #0072B2;border-radius:6px;padding:10px;background:#f2f8fc;"
              f"font-size:14px'><b>{html.escape(it.headline)}</b></div>"]
         if res.warnings:

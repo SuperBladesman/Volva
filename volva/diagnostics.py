@@ -40,9 +40,14 @@ class Interpretation:
     d_max: float = np.nan
     anisotropic: bool = False
     shape_determined: bool = True
+    verdict: str = ""        # a few words: what kind of answer this is
+    verdict_level: str = ""  # "ok", "info", "warning" or "critical"
 
     def add(self, level, topic, text):
         self.findings.append(Finding(level, topic, text))
+
+    def set_verdict(self, text, level):
+        self.verdict, self.verdict_level = text, level
 
 
 def _t(val, err):
@@ -55,6 +60,8 @@ def interpret(methods: Dict[str, MethodResult], peaks: List[CorrectedPeak],
               has_profile: bool, size_label: str = "L_vol", setup_critical=None) -> Interpretation:
     out = Interpretation()
     out = _interpret(out, methods, peaks, has_profile, size_label)
+    if not has_profile and out.verdict_level != "critical" and out.verdict != "No peaks selected":
+        out.set_verdict("Lower bound only: no instrument profile", "critical")
     for c in (setup_critical or []):
         out.findings.insert(0, Finding("critical", "Setup", c))
     if setup_critical:
@@ -62,6 +69,7 @@ def interpret(methods: Dict[str, MethodResult], peaks: List[CorrectedPeak],
                         "radiation / Kα2 setting matches the instrument profile.")
         out.headline_size = np.nan
         out.headline_key = ""
+        out.set_verdict("Not reported: the settings do not match the instrument profile", "critical")
     return out
 
 
@@ -80,6 +88,7 @@ def _interpret(out, methods, peaks, has_profile, size_label):
                 "Some reflections lie outside the 2θ range of the standard; the instrument profile is extrapolated there.")
     if not used:
         out.headline = "No peaks selected."
+        out.set_verdict("No peaks selected", "warning")
         return out
     if n_rl:
         lvl = "critical" if n_rl > len(used) / 2 else "warning"
@@ -110,6 +119,8 @@ def _interpret(out, methods, peaks, has_profile, size_label):
                         if b else "No resolvable sample broadening.")
         out.headline_method = "resolution bound"
         out.strain_state = "unknown"
+        out.set_verdict("Lower bound only: beyond the instrument's resolution" if b
+                        else "No resolvable sample broadening", "warning")
         return out
 
     # ------------------------------------------------------------ profile character
@@ -364,6 +375,7 @@ def _interpret(out, methods, peaks, has_profile, size_label):
                             "Mean sizes are not reported for such samples.")
             out.headline_method = "resolution bound"
             out.strain_state = out.strain_state or "unknown"
+            out.set_verdict("Lower bound only: beyond the instrument's reliable range", "warning")
             return out
 
     # ------------------------------------------------------------ headline
@@ -379,6 +391,7 @@ def _interpret(out, methods, peaks, has_profile, size_label):
                         f"({src.name}). Report per-reflection values.")
         out.headline_method = src.name
         out.headline_size = float(np.mean(per))
+        out.set_verdict("Anisotropic: the size depends on direction", "warning")
         return out
     if out.strain_state in ("not_resolved", "inconsistent", "") and sch and sch.size_nm:
         pick = sch
@@ -393,8 +406,10 @@ def _interpret(out, methods, peaks, has_profile, size_label):
             out.headline_size_err = pick.size_err if pick.size_err is not None else np.nan
             out.headline = (f"{size_label} ≈ {pick.size_nm:.1f} nm ({pick.name}); strain broadening is indicated "
                             "but not quantified reliably by the size-strain plots. Treat the size as approximate.")
+            out.set_verdict("Approximate size: strain indicated but not quantified", "warning")
         else:
             out.headline = "Strain indicated but size and strain could not be separated; see per-method results."
+            out.set_verdict("No single size: size and strain not separated", "warning")
         return out
     elif out.strain_state == "resolved":
         # Prefer Voigt W-H (separates the fitted Lorentzian and Gaussian components directly);
@@ -406,6 +421,7 @@ def _interpret(out, methods, peaks, has_profile, size_label):
         pick = sch
     if pick is None or not pick.size_nm:
         out.headline = "No reliable single size; see per-method results."
+        out.set_verdict("No single size", "warning")
         return out
     out.headline_method = pick.name
     out.headline_key = pick.key
@@ -421,6 +437,12 @@ def _interpret(out, methods, peaks, has_profile, size_label):
         n_txt = f"mean ± SD over {pick.n} reflections" if pick.n > 1 else "single reflection, ± propagated uncertainty"
         out.headline = (f"{size_label} = {pick.size_nm:.1f} ± {pick.size_err:.1f} nm "
                         f"(Scherrer, {n_txt}){st}.")
+        if out.strain_state == "inconsistent":
+            out.set_verdict("Size resolved; strain evidence mixed", "info")
+        elif out.strain_state == "not_resolved":
+            out.set_verdict("Size resolved; no strain resolved", "ok")
+        else:
+            out.set_verdict("Size resolved; strain not assessed", "info")
     else:
         out.headline_strain = pick.strain if pick.strain is not None else np.nan
         out.headline_strain_err = pick.strain_err if pick.strain_err is not None else np.nan
@@ -431,8 +453,13 @@ def _interpret(out, methods, peaks, has_profile, size_label):
         other = hw if pick is vwh else None
         if other is not None and other.success and other.size_nm and other.strain is not None:
             out.headline += (f" Halder-Wagner: {other.size_nm:.1f} nm, {100 * other.strain:.3f} %.")
+        if pick.strain_significant:
+            out.set_verdict("Size and strain resolved", "ok")
+        else:
+            out.set_verdict("Size resolved; strain not significant", "info")
     if np.all(np.isfinite(out.size_range)) and out.size_range[1] > out.size_range[0]:
         out.headline += f" Across methods: {out.size_range[0]:.1f}–{out.size_range[1]:.1f} nm."
     if not has_profile:
         out.headline = "LOWER BOUND ONLY (no instrument profile). " + out.headline
+        out.set_verdict("Lower bound only: no instrument profile", "critical")
     return out

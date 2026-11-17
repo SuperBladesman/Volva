@@ -126,6 +126,16 @@ def _pct_err(samples):
 
 
 # ---------------------------------------------------------------------------
+# One line per method: what it assumes. Shown as tooltips in the GUI.
+ASSUMPTIONS = {
+    "scherrer": "all sample broadening is size (no strain)",
+    "single_line": "size broadening is Lorentzian and strain broadening Gaussian, reflection by reflection",
+    "monshi": "size only; a slope of 1 means no strain",
+    "wh": "size and strain breadths add linearly (uniform deformation model)",
+    "voigt_wh": "size broadening is Lorentzian and strain broadening Gaussian",
+    "hw": "a parabolic approximation to the Voigt breadth, which weights low-angle reflections more",
+}
+
 NOTES = {
     "scherrer": (
         "Assumes all sample broadening is due to crystallite size (no strain). With integral "
@@ -214,7 +224,7 @@ def scherrer(peaks: List[CorrectedPeak], lam, K) -> MethodResult:
                   yerr=[row["size_err"] for row in r.per_peak if row.get("size") is not None],
                   xb=[row["two_theta"] for row in r.per_peak if row.get("size") is None],
                   yb=[row.get("size_bound") for row in r.per_peak if row.get("size") is None],
-                  xlabel="2θ (°)", ylabel="Size (nm)")
+                  xlabel="2θ / °", ylabel="Size / nm")
     return r
 
 
@@ -281,7 +291,7 @@ def single_line(peaks, lam, K) -> MethodResult:
     r.plot = dict(x=[row["two_theta"] for row in r.per_peak if row.get("size") is not None],
                   y=Ds, yerr=Derr, xs=[row["two_theta"] for row in r.per_peak],
                   ys=list(100 * es), yserr=list(100 * np.array(eerr)),
-                  xlabel="2θ (°)", ylabel="Size (nm)")
+                  xlabel="2θ / °", ylabel="Size / nm")
     return r
 
 
@@ -306,7 +316,7 @@ def monshi(peaks, lam, K) -> MethodResult:
         r.warnings.append(
             f"Slope {m:.2f} ± {sm:.2f} differs significantly from 1: broadening is not pure size, "
             "so the Monshi size is not physically meaningful.")
-    r.plot = dict(x=list(x), y=list(y), yerr=list(yerr), xlabel="ln(1/cos θ)", ylabel="ln β (β in rad)")
+    r.plot = dict(x=list(x), y=list(y), yerr=list(yerr), xlabel="ln(1/cos θ)", ylabel="ln(β / rad)")
     return r
 
 
@@ -326,7 +336,7 @@ def williamson_hall(peaks, lam, K) -> MethodResult:
     _size_from_intercept(r, b, sb, K * lam)
     _strain_from_slope(r, m, sm)
     r.plot = dict(x=list(x), y=list(y * 1e3), yerr=list(yerr * 1e3),
-                  xlabel="4 sin θ", ylabel="β cos θ (mrad)", scale=1e3)
+                  xlabel="4 sin θ", ylabel="β cos θ / mrad", scale=1e3)
     return r
 
 
@@ -354,7 +364,7 @@ def voigt_wh(peaks, lam, K) -> MethodResult:
     _size_from_intercept(r, bL, sbL, K * lam)
     _strain_from_slope(r, mG, smG)
     r.plot = dict(x=list(x), y=list(yL * 1e3), yerr=list(eL * 1e3), y2=list(yG * 1e3), y2err=list(eG * 1e3),
-                  xlabel="4 sin θ", ylabel="β cos θ (mrad)", scale=1e3,
+                  xlabel="4 sin θ", ylabel="β cos θ / mrad", scale=1e3,
                   fit1=(mL, bL), fit2=(mG, 0.0))
     return r
 
@@ -392,7 +402,7 @@ def halder_wagner(peaks, lam, K) -> MethodResult:
         up = np.sqrt(max(c + 2 * (sc if np.isfinite(sc) else 0), 0)) / 2
         r.strain, r.strain_upper, r.strain_significant = max(0.0, float(np.sqrt(max(c, 0)) / 2)), float(up), False
     r.plot = dict(x=list(x), y=list(y * 1e3), yerr=list(yerr * 1e3),
-                  xlabel="β*/d*² (nm)", ylabel="(β*/d*)² (×10⁻³)", scale=1e3)
+                  xlabel="(β*/d*²) / nm", ylabel="(β*/d*)² / 10⁻³", scale=1e3)
     return r
 
 

@@ -71,7 +71,7 @@ def plot_raw(fig, pattern, background=None, title=None):
     if background is not None and len(background) == len(pattern.two_theta):
         ax.plot(pattern.two_theta, background, color=VERM, lw=1.2, ls="--", label="Background (SNIP)")
         ax.legend(frameon=False, fontsize=8)
-    _style(ax, "2θ (°)", "Intensity (counts)", title or pattern.name)
+    _style(ax, "2θ / °", "Intensity / counts", title or pattern.name)
     _tight(fig)
     return fig
 
@@ -113,13 +113,13 @@ def plot_pattern(fig, res):
                Line2D([], [], color=GREY, marker="x", ls="", ms=6, label="Rejected / unused")]
     ax.legend(handles=handles, frameon=False, fontsize=8, ncol=3, loc="upper right")
     ax.set_ylim(top=ytop * 1.25)
-    _style(ax, None, "Intensity (counts)", res.pattern.name)
+    _style(ax, None, "Intensity / counts", res.pattern.name)
     ax.tick_params(labelbottom=False)
     for f in res.fits:
         if f.residual is not None:
             axr.plot(f.data_x, f.residual, color=MUTED, lw=0.5)
     axr.axhline(0, color=INK, lw=0.5)
-    _style(axr, "2θ (°)", "Resid.")
+    _style(axr, "2θ / °", "Resid.")
     _tight(fig)
     return fig
 
@@ -167,7 +167,7 @@ def plot_peak(fig, res, index):
     if res.noise:
         for s in (-3, 3):
             axr.axhline(s * res.noise, color=VERM, lw=0.5, ls="--")
-    _style(axr, "2θ (°)", "Resid.")
+    _style(axr, "2θ / °", "Resid.")
     _tight(fig)
     return fig
 
@@ -242,7 +242,7 @@ def plot_instrument(fig, profile, res=None):
         ax.plot([p.two_theta for p in res.peaks], Fs, "^", color=GREEN, ms=5, label="Sample FWHM")
     ax.set_ylim(bottom=0)
     ax.legend(frameon=False, fontsize=7)
-    _style(ax, "2θ (°)", "FWHM (°)", "Instrument width (shaded: calibrated range)")
+    _style(ax, "2θ / °", "FWHM / °", "Instrument width (shaded: calibrated range)")
 
     # --- shape ------------------------------------------------------------------
     ax2 = fig.add_subplot(gs[1])
@@ -259,7 +259,7 @@ def plot_instrument(fig, profile, res=None):
     ax2.axhline(0, color=INK, lw=0.5)
     ax2.set_ylim(-0.1, 1.1)
     ax2.legend(frameon=False, fontsize=7, loc="lower left")
-    _style(ax2, "2θ (°)", "η  /  skew", "Peak shape")
+    _style(ax2, "2θ / °", "η and skew", "Peak shape")
 
     # --- sample / instrument ------------------------------------------------------
     if ncol == 3:
@@ -273,7 +273,7 @@ def plot_instrument(fig, profile, res=None):
         ax3.text(0.98, thr, f" limit {thr:g}", transform=ax3.get_yaxis_transform(), ha="right", va="bottom",
                  fontsize=8, color=VERM)
         ax3.set_ylim(bottom=0.8)
-        _style(ax3, "2θ (°)", "β_obs / β_inst", "Sample / instrument breadth")
+        _style(ax3, "2θ / °", "β_obs/β_inst", "Sample / instrument breadth")
     _tight(fig)
     return fig
 
@@ -306,7 +306,7 @@ def plot_sizes(fig, res):
                         textcoords="offset points", ha="center", fontsize=7, color=MUTED)
     ax.legend(frameon=False, fontsize=8)
     ax.set_ylim(bottom=0)
-    _style(ax, None, f"{lab} (nm)", "Size by reflection")
+    _style(ax, None, f"{lab} / nm", "Size by reflection")
     ax.tick_params(labelbottom=False)
     ax2 = fig.add_subplot(gs[1], sharex=ax)
     if sl and sl.plot.get("xs"):
@@ -314,7 +314,7 @@ def plot_sizes(fig, res):
                      capsize=2, lw=1, label="Single-line strain (Gaussian part)")
         ax2.axhline(0, color=INK, lw=0.5)
         ax2.legend(frameon=False, fontsize=8)
-    _style(ax2, "2θ (°)", "Strain e (%)")
+    _style(ax2, "2θ / °", "Strain e / %")
     _tight(fig)
     return fig
 
@@ -422,7 +422,7 @@ def plot_comparison(fig, res):
                 ax.annotate("lower bound (strain present)", (r.size_nm, yv), xytext=(0, -12),
                             textcoords="offset points", ha="center", fontsize=7, color=MUTED)
     ax.set_xlim(left=0)
-    _style(ax, f"{res.settings.size_label} (nm)", None, "Size")
+    _style(ax, f"{res.settings.size_label} / nm", None, "Size")
     for yv, r in zip(ypos, rs):
         if r.strain_significant is False and r.strain_upper is not None:
             ax2.plot([0, 100 * r.strain_upper], [yv, yv], color=GREY, lw=3, solid_capstyle="round")
@@ -435,6 +435,6 @@ def plot_comparison(fig, res):
                          ha="center", fontsize=8, color=INK)
     ax2.axvline(0, color=INK, lw=0.5)
     ax2.tick_params(labelleft=False)
-    _style(ax2, "Strain e (%)", None, "Strain (grey bar = upper limit)")
+    _style(ax2, "Strain e / %", None, "Strain (grey bar = upper limit)")
     fig.subplots_adjust(left=0.17, right=0.97, bottom=0.12, top=0.9, wspace=0.08)
     return fig

@@ -143,8 +143,8 @@ To update, rebuild, then reinstall or replace the folder. Instrument profiles (`
 1. **Instrument profile (once per instrument configuration).** Measure NIST SRM 660c LaB₆ with exactly the optics, slits and scan programme used for samples. Use **Calibrate…**, check the **Instrument** tab and save the profile (`.json`). Völva reloads the last profile at start-up. Recalibrate after any change to the optics, or at the lab's agreed interval.
 2. **Open** the sample pattern: `.xy`, `.xye`, `.txt`, `.dat`, `.csv`, `.asc` or `.xrdml`. For XRDML files, the wavelength recorded by the instrument is used.
 3. **Analyse.** Völva fits the background, detects peaks, fits every peak as a pseudo-Voigt Kα₁ + Kα₂ doublet (overlapping peaks together), removes the instrument profile and runs all six methods.
-4. **Check the fits.** Use the *Pattern*, *Peak* (◀ ▶) and *Gallery* tabs. Untick doubtful peaks in the table, and type hkl labels if known; the results update straight away.
-5. **Read the *Result* tab.** It gives a headline value, what the methods say together, and the full method table.
+4. **Check the fits.** Use the *Pattern*, *Peak* (◀ ▶, or Alt+← and Alt+→; moving through the peak table moves it too) and *Gallery* tabs. Untick doubtful peaks in the table, and type hkl labels if known; the results update straight away.
+5. **Read the *Result* tab.** It gives a short verdict (a resolved size, size and strain, a lower bound only, anisotropic, or not reported), the headline value, what the methods say together, and the full method table. Each tab's tooltip says what it shows and, for the method tabs, what the method assumes.
 6. **Edit ▸ Copy methods text** (Ctrl+Shift+C) copies a Methods paragraph describing the analysis as run, with the version, DOI and citation; the *Result* tab shows it too.
 7. **File ▸ Export results** writes a report, CSV tables, figures, the methods text and a session file (see [Outputs](#outputs)).
 
