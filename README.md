@@ -145,7 +145,8 @@ To update, rebuild, then reinstall or replace the folder. Instrument profiles (`
 3. **Analyse.** Völva fits the background, detects peaks, fits every peak as a pseudo-Voigt Kα₁ + Kα₂ doublet (overlapping peaks together), removes the instrument profile and runs all six methods.
 4. **Check the fits.** Use the *Pattern*, *Peak* (◀ ▶) and *Gallery* tabs. Untick doubtful peaks in the table, and type hkl labels if known; the results update straight away.
 5. **Read the *Result* tab.** It gives a headline value, what the methods say together, and the full method table.
-6. **File ▸ Export results** writes a report, CSV tables, figures and a session file (see [Outputs](#outputs)).
+6. **Edit ▸ Copy methods text** (Ctrl+Shift+C) copies a Methods paragraph describing the analysis as run, with the version, DOI and citation; the *Result* tab shows it too.
+7. **File ▸ Export results** writes a report, CSV tables, figures, the methods text and a session file (see [Outputs](#outputs)).
 
 ## Outputs
 
@@ -155,6 +156,7 @@ To update, rebuild, then reinstall or replace the folder. Instrument profiles (`
 | `<name>_peaks.csv` | per reflection: position, FWHM, η, G/L (observed, instrument, sample), breadths, ratio, Scherrer size or bound, flags |
 | `<name>_summary.csv` | per method: size ± error or bound, strain ± error or limit, R², n, warnings |
 | `<name>_session.json` | complete record: software and library versions, SHA-256 of sample and standard files, all settings, profile parameters, results, log |
+| `<name>_methods.txt` | a Methods paragraph describing the analysis as run, with the version, DOI and citation |
 | `<name>_*.png` | pattern, sizes by reflection, comparison, Williamson–Hall, Voigt Williamson–Hall, Halder–Wagner, instrument (300 dpi) |
 
 Every CSV starts with `#` header lines giving the version, run time, file checksum, instrument profile, wavelength and K.

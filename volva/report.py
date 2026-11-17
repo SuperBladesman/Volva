@@ -6,6 +6,7 @@ Every export bundle contains:
   <name>_peaks.csv     per-reflection data
   <name>_summary.csv   one row per method
   <name>_session.json  everything needed to reproduce the result
+  <name>_methods.txt   a Methods paragraph and the citation for the version used
 """
 
 from __future__ import annotations
@@ -18,8 +19,10 @@ import platform
 import numpy as np
 
 from . import __version__
+from . import constants as C
+from .citation import citation, in_text
 from .methods import _bound
-from .pipeline import AnalysisResult
+from .pipeline import AnalysisResult, _effective_doublet
 
 LEVEL_MARK = {"critical": "✗✗", "warning": "⚠", "info": "·", "ok": "✓"}
 
@@ -129,6 +132,103 @@ def text_report(res: AnalysisResult) -> str:
     return "\n".join(L)
 
 
+# Method names as they should read in a Methods section (two-person names take an en dash).
+_METHOD_NAMES = {"scherrer": "Scherrer", "single_line": "single-line Voigt", "monshi": "Monshi–Scherrer",
+                 "wh": "Williamson–Hall", "voigt_wh": "Voigt Williamson–Hall", "hw": "Halder–Wagner"}
+_ALL_METHODS = ("the Scherrer, single-line Voigt (de Keijser et al., 1982), Monshi–Scherrer (Monshi et al., "
+                "2012), Williamson–Hall (uniform deformation model), Voigt Williamson–Hall (Langford, 1992) "
+                "and Halder–Wagner (1966) methods")
+
+
+def methods_text(res: AnalysisResult, with_citation: bool = True) -> str:
+    """
+    A Methods paragraph describing what this analysis did, ready to paste into a
+    paper or thesis, with the version and DOI. It describes methods only, never
+    results, and every clause follows from the settings and profile actually used.
+    """
+    s, wl, prof = res.settings, res.wavelength, res.profile
+    S = [f"Crystallite size and microstrain were determined from the X-ray diffraction line broadening "
+         f"with {in_text(res.version)}."]
+
+    if s.wavelength in C.WAVELENGTHS:
+        rad = f"{s.wavelength.replace('Ka', 'Kα')} radiation"
+    elif s.wavelength == "From file":
+        rad = "the wavelength recorded in the data file"
+    else:
+        rad = "a user-defined wavelength"
+    bg = "set automatically from the peak widths" if s.bg_half_width is None else "set by hand"
+    if _effective_doublet(s.doublet, wl):
+        S.append(f"Each reflection was fitted as a split pseudo-Voigt Kα1/Kα2 doublet ({rad}; λ(Kα1) = "
+                 f"{wl['ka1']:.7f} nm; Kα2/Kα1 intensity ratio {wl['ratio']:g}) above a SNIP background "
+                 f"(half-width {res.bg_half_width:.2f}° 2θ, {bg}).")
+    else:
+        S.append(f"Each reflection was fitted as a single split pseudo-Voigt ({rad}; λ = {wl['ka1']:.7f} nm) "
+                 f"above a SNIP background (half-width {res.bg_half_width:.2f}° 2θ, {bg}).")
+
+    if s.two_theta_min is not None or s.two_theta_max is not None:
+        lo = s.two_theta_min if s.two_theta_min is not None else float(res.pattern.two_theta.min())
+        hi = s.two_theta_max if s.two_theta_max is not None else float(res.pattern.two_theta.max())
+        lo, hi = f"{lo:.1f}", f"{hi:.1f}"
+        S.append(f"Only data between {lo} and {hi}° 2θ were analysed.")
+    used = [p for p in res.peaks if p.use]
+    if used:
+        t = [p.two_theta for p in used]
+        span = f"{min(t):.1f}–{max(t):.1f}° 2θ"
+        which = (f"All {len(used)} fitted reflections ({span}) were used" if len(used) == len(res.peaks)
+                 else f"Of the {len(res.peaks)} fitted reflections, {len(used)} ({span}) were used")
+        S.append(f"{which}; peaks were detected at a net area of at least {s.prominence_sigma:g}σ of the local "
+                 "counting noise.")
+
+    if prof is None:
+        S.append("No instrument profile was used, so instrumental broadening is included in the sample breadths "
+                 "and every size is a lower bound.")
+    else:
+        std = prof.standard if prof.standard and not prof.standard.startswith("Other") else "a line-profile standard"
+        S.append(f"The instrumental contribution was determined from {std} measured with the same optics.")
+        if prof.profile_model == "total":
+            fw = ("a Caglioti function, FWHM² = U tan²θ + V tan θ + W" if prof.f_model == "caglioti"
+                  else "a quadratic in 2θ")
+            c = list(prof.eta_coef or [])
+            eta = "linear in 2θ" if len(c) > 1 and c[1] != 0 else "constant"
+            S.append(f"The full widths at half maximum of its reflections were fitted with {fw}, and the pseudo-Voigt "
+                     f"mixing parameter η was taken as {eta}; the instrumental Gaussian and Lorentzian widths at each "
+                     "angle were obtained from these by the Thompson–Cox–Hastings relations.")
+        else:
+            g = "a Caglioti function" if prof.g_model == "caglioti" else "interpolation between the standard's reflections"
+            l_ = ("L = X tan θ + Y / cos θ" if prof.l_model == "tan_sec"
+                  else "interpolation between the standard's reflections")
+            S.append(f"The instrumental Gaussian widths were described by {g} and the Lorentzian widths by {l_}.")
+        S.append("Each sample profile was split into Gaussian and Lorentzian widths by the same relations; the "
+                 "instrumental Gaussian width was subtracted in quadrature and the Lorentzian width linearly, and a "
+                 "sample component was assigned only where the observed width exceeded the instrumental width by "
+                 "more than 2σ.")
+
+    if s.k_custom is not None:
+        conv = f"Sizes were calculated from integral breadths with K = {s.k_custom:g}"
+    elif "Sphere" in s.size_convention:
+        conv = "Sizes are sphere diameters, from integral breadths with K = 4/3"
+    else:
+        conv = "Sizes are volume-weighted column lengths (L_vol), from integral breadths with K = 1"
+    S.append(f"{conv}, by {_ALL_METHODS}.")
+    src = "the peak fits and the instrument calibration" if prof is not None else "the peak fits"
+    unc = f"Uncertainties from {src} were propagated by Monte Carlo ({s.mc_samples} draws, fixed seed)"
+    if prof is not None:
+        unc += ("; the calibration was also treated as a systematic uncertainty, by repeating every method with the "
+                "instrument profile shifted by ±1σ, uniformly and as a tilt in tan θ")
+    S.append(unc + ".")
+
+    it = res.interpretation
+    if it is not None and it.headline_method == "resolution bound":
+        S.append("Where the sample broadening was not resolved, 2σ lower bounds on size are quoted.")
+    elif it is not None and (it.headline_key or it.headline_method):
+        S.append(f"Values quoted are from the {_METHOD_NAMES.get(it.headline_key, it.headline_method)} analysis.")
+
+    text = " ".join(S)
+    if with_citation:
+        text += "\n\n" + citation(res.version)
+    return text
+
+
 def write_peaks_csv(res: AnalysisResult, path: str):
     K, lam = res.settings.K, res.wavelength["ka1"]
     with open(path, "w", newline="", encoding="utf-8") as f:
@@ -232,6 +332,10 @@ def write_bundle(res: AnalysisResult, out_dir: str, base: str | None = None, fig
     p = os.path.join(out_dir, f"{base}_session.json")
     with open(p, "w", encoding="utf-8") as f:
         json.dump(session_dict(res), f, indent=2, ensure_ascii=False)
+    paths.append(p)
+    p = os.path.join(out_dir, f"{base}_methods.txt")
+    with open(p, "w", encoding="utf-8") as f:
+        f.write(methods_text(res) + "\n")
     paths.append(p)
     if figures:
         from matplotlib.figure import Figure

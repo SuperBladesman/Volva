@@ -33,7 +33,8 @@ from ..instrument import InstrumentProfile, calibrate_from_standard  # noqa: E40
 from ..io import LoadError, load_pattern  # noqa: E402
 from ..pipeline import AnalysisSettings, rerun_methods, resolve_wavelength, run_analysis  # noqa: E402
 from ..methods import _bound  # noqa: E402
-from ..report import text_report, write_bundle  # noqa: E402
+from ..citation import citation  # noqa: E402
+from ..report import methods_text, text_report, write_bundle  # noqa: E402
 
 LEVEL_STYLE = {
     "critical": ("CRITICAL", "#b00020"),
@@ -130,6 +131,12 @@ class MainWindow(QMainWindow):
             if key is not None:
                 a.setShortcut(key)
             m.addAction(a)
+        e = self.menuBar().addMenu("&Edit")
+        self.act_methods = QAction("Copy &methods text", self)
+        self.act_methods.setShortcut(QKeySequence("Ctrl+Shift+C"))
+        self.act_methods.setToolTip("Copy a Methods paragraph describing this analysis, with the version, DOI and citation")
+        self.act_methods.triggered.connect(self.copy_methods_text)
+        e.addAction(self.act_methods)
         h = self.menuBar().addMenu("&Help")
         a = QAction("About Völva", self)
         a.triggered.connect(self.about)
@@ -547,6 +554,13 @@ class MainWindow(QMainWindow):
         if self.result.interpretation:
             self.statusBar().showMessage(self.result.interpretation.headline)
 
+    def copy_methods_text(self):
+        if self.result is None:
+            QMessageBox.information(self, "Völva", "Analyse a pattern first: the text describes that analysis.")
+            return
+        QApplication.clipboard().setText(methods_text(self.result))
+        self.statusBar().showMessage("Methods text and citation copied to the clipboard.", 8000)
+
     def export_results(self):
         if self.result is None:
             QMessageBox.information(self, "Völva", "Nothing to export yet.")
@@ -576,7 +590,8 @@ class MainWindow(QMainWindow):
         QMessageBox.about(self, "About Völva",
                           f"<b>Völva {__version__}</b><br>XRD crystallite size and microstrain analysis.<br><br>"
                           "Voigt-based instrumental correction, integral breadths, six complementary methods and "
-                          "an explicit comparison of their assumptions.<br><br>University of Sheffield.")
+                          "an explicit comparison of their assumptions.<br><br>"
+                          f"To cite: {html.escape(citation())}<br><br>University of Sheffield.")
 
     # ------------------------------------------------------------------ table
     def _fill_table(self, keep_state=False):
@@ -717,6 +732,13 @@ class MainWindow(QMainWindow):
                  "reflections. Linear methods: ± standard error of the regression. Upper limits are 2σ. "
                  f"K = {res.settings.K:.4g}; breadths are integral breadths of the instrument-corrected Voigt profile. "
                  "Method assumptions are listed in the Report tab.</p>")
+        mt = methods_text(res, with_citation=False)
+        H.append("<h3>Methods text</h3>"
+                 f"<p style='font-size:12px'>{html.escape(mt)}</p>"
+                 f"<p style='font-size:12px;color:#333'>{html.escape(citation(res.version))}</p>"
+                 "<p style='color:#555;font-size:11px'><b>Edit ▸ Copy methods text</b> (Ctrl+Shift+C) copies the "
+                 "paragraph and the citation. It describes this analysis as run; edit it to suit your Methods "
+                 "section, but keep the version and DOI.</p>")
         self.txt_result.setHtml("".join(H))
 
 
