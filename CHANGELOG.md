@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Repository
+- CI uses actions/checkout@v5 and actions/setup-python@v6, which run on Node.js 24; GitHub has deprecated Node.js 20 (#22).
+
 ## 4.1.3: 16 November 2026
 
 Preparation for the first public release. No change to any result.
