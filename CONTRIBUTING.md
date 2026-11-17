@@ -32,7 +32,7 @@ Never commit data that cannot be redistributed: measured patterns from other peo
 
 ## Releases
 
-Releases are made once a month while Völva is in active development. Each is tagged (`v4.1.3`) and published as a GitHub release, which Zenodo archives with its own DOI. Before tagging, run `python tools/bump_version.py X.Y.Z YYYY-MM-DD`, which sets the version in `pyproject.toml`, `volva/__init__.py`, `CITATION.cff` (with `date-released`), `.zenodo.json`, the Windows build files and the README, and dates the changelog entry; `tests/test_release.py` checks that they agree. After Zenodo has archived the release, add its DOI to `CITATION.cff` and the README.
+Releases are made once a month while Völva is in active development. Each is tagged (`v4.1.3`) and published as a GitHub release, which Zenodo archives with its own DOI. Before tagging, run `python tools/bump_version.py X.Y.Z YYYY-MM-DD`, which sets the version in `pyproject.toml`, `volva/__init__.py`, `CITATION.cff` (with `date-released`), `.zenodo.json`, the Windows build files and the README, and dates the changelog entry; `tests/test_release.py` checks that they agree. After Zenodo has archived the release, add its DOI to `CITATION.cff`, the README and `VERSION_DOIS` in `volva/citation.py`, so that the methods text cites that version.
 
 ## Licence
 

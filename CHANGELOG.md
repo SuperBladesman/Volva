@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+- **Methods text.** Edit ▸ Copy methods text (Ctrl+Shift+C) copies a Methods paragraph describing the analysis as run: the version and its DOI, the peak model and Kα2 handling, the background, the reflections used, the standard and the instrument model, how the instrument was removed, the size convention and K, the six methods, the Monte Carlo and calibration uncertainties, and which method the quoted value comes from, followed by the citation. The *Result* tab shows it, every export writes it as `<name>_methods.txt`, and `volva.report.methods_text(result)` returns it (#32).
+- `volva/citation.py` holds the DOI for all versions and the DOI of each release; the About box gives the citation.
+
 ### Repository
 - CI uses actions/checkout@v5 and actions/setup-python@v6, which run on Node.js 24; GitHub has deprecated Node.js 20 (#22).
 

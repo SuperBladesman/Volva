@@ -30,6 +30,9 @@ w.table.item(1, 2).setText("200")
 w._rerun()
 assert not w.result.peaks[0].use and w.result.peaks[1].hkl == "200"
 print("after untick:", w.result.interpretation.headline)
+w.copy_methods_text()
+assert QApplication.clipboard().text().startswith("Crystallite size and microstrain were determined"), "methods text not copied"
+assert "Methods text" in w.txt_result.toPlainText()
 for i in range(w.tabs.count()):
     w.tabs.setCurrentIndex(i); app.processEvents()
     if out:
