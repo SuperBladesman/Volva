@@ -33,6 +33,17 @@ print("after untick:", w.result.interpretation.headline)
 w.copy_methods_text()
 assert QApplication.clipboard().text().startswith("Crystallite size and microstrain were determined"), "methods text not copied"
 assert "Methods text" in w.txt_result.toPlainText()
+# verdict above the headline, tooltips on every tab, keyboard and table stepping
+assert w.result.interpretation.verdict and w.result.interpretation.verdict in w.txt_result.toPlainText()
+assert all(w.tabs.tabToolTip(i) for i in range(w.tabs.count())), "a tab has no tooltip"
+assert "Assumes" in w.tabs.tabToolTip([w.tabs.tabText(i) for i in range(w.tabs.count())].index("Voigt W-H"))
+w.peak_index = 0
+w._step_peak(1, show=True)
+assert w.peak_index == 1 and w.tabs.currentWidget() is w.plot_tabs["Peak"] and w.table.currentRow() == 1
+w.table.setCurrentCell(3, 1); app.processEvents()
+assert w.peak_index == 3, "moving through the table did not move the Peak tab"
+for ax in w.plot_tabs["Pattern"].fig.axes:
+    assert "(" not in ax.get_xlabel() or "/" in ax.get_xlabel(), ax.get_xlabel()
 for i in range(w.tabs.count()):
     w.tabs.setCurrentIndex(i); app.processEvents()
     if out:
