@@ -8,17 +8,23 @@
 [![tests](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml/badge.svg)](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24293731.svg)](https://doi.org/10.5281/zenodo.24293731)
 
-Most crystallite sizes in the literature come from the Scherrer equation, with the instrument's contribution taken off by subtracting full widths in quadrature. For Voigt-shaped peaks that shortcut is wrong. Völva's own 4.0 notebook used it, and on synthetic patterns it underestimated 20–200 nm crystallites by 7–35 %. For 2 µm crystallites it flagged every peak as resolution-limited, then still averaged them into a size of 124 nm. A size beyond the resolution of the instrument is not a size.
+Völva measures crystallite size and microstrain from the broadening of powder X-ray diffraction peaks. You give it a sample pattern and a pattern of a line-profile standard (NIST SRM 660c LaB₆) measured on the same diffractometer. It then:
 
-Völva fits every reflection as a pseudo-Voigt Kα₁ + Kα₂ doublet, removes a measured instrument profile component by component (Gaussian widths in quadrature, Lorentzian widths linearly) and runs six methods on what is left. It then says where the methods agree, which of their assumptions the data contradict, and when the honest answer is only a bound. It is a desktop application (PySide6), a command line and a Python package.
+- fits every reflection as a split pseudo-Voigt Kα₁ + Kα₂ doublet, with overlapping peaks fitted together;
+- removes the instrument's contribution component by component: Gaussian widths in quadrature, Lorentzian widths linearly;
+- runs six methods on what is left: Scherrer, single-line Voigt, Monshi–Scherrer, Williamson–Hall, Voigt Williamson–Hall and Halder–Wagner;
+- says where the methods agree, which of their assumptions the data contradict, and which value to quote;
+- gives Monte Carlo uncertainties, with any error in the instrument calibration carried as a systematic;
+- reports a lower bound where the crystallites are larger than the instrument can resolve, and no value at all if the radiation setting does not match the calibration;
+- writes a report, CSV tables, figures, a session file recording every setting and file checksum, and a Methods paragraph with the version and DOI.
 
-It is written for users of laboratory diffractometers who need a size and a strain they can defend, and for the people who check their numbers.
+It runs as a desktop application, as a command line for batches of patterns, and as a Python package, on Windows, macOS and Linux. It is written for anyone measuring crystallite size on a laboratory diffractometer who needs a number they can defend.
 
 > **Validation status.** Völva recovers known sizes and strains from synthetic patterns to within a few per cent (see [Tests](#tests)). It has not yet been checked against a certified size standard; the protocol, for NIST SRM 1979 and SRM 660c, is in [VALIDATION.md](VALIDATION.md). Until that is done, treat results as provisional.
 
 ## What Völva does, and why
 
-**Instrumental correction is Voigt-based.** Each fitted pseudo-Voigt (FWHM, η) is split into Gaussian (G) and Lorentzian (L) widths using the Thompson–Cox–Hastings relations. The instrument profile is modelled as Rietveld programs do: the total FWHM of the standard follows a Caglioti curve, FWHM² = U tan²θ + V tan θ + W, and η is constant (or linear in 2θ if the trend is significant); instrument G and L at any angle come from TCH decomposition of these smooth curves. Standard and sample peaks are fitted as split pseudo-Voigts, so axial-divergence asymmetry does not bias the widths. Sample widths follow: G in quadrature, L linearly.
+**Instrumental correction is Voigt-based.** Each fitted pseudo-Voigt (FWHM, η) is split into Gaussian (G) and Lorentzian (L) widths using the Thompson–Cox–Hastings relations. The instrument profile is modelled as Rietveld programs do: the total FWHM of the standard follows a Caglioti curve, FWHM² = U tan²θ + V tan θ + W, and η is constant (or linear in 2θ if the trend is significant); instrument G and L at any angle come from TCH decomposition of these smooth curves. Standard and sample peaks are fitted as split pseudo-Voigts, so axial-divergence asymmetry does not bias the widths. Sample widths follow: G in quadrature, L linearly. The common shortcut, subtracting total widths in quadrature, is exact only for Gaussian peaks; for peaks with any Lorentzian character it overstates the sample breadth, so sizes come out too small.
 
 **Breadths are integral breadths.** With K = 1, the Scherrer equation then gives the volume-weighted column length L_vol, the quantity certified for NIST SRM 1979. *Sphere diameter* (K = 4/3) and a custom K are also available.
 
