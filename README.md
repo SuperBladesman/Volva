@@ -6,6 +6,7 @@
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)
 ![Version 4.1.3](https://img.shields.io/badge/version-4.1.3-green.svg)
 [![tests](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml/badge.svg)](https://github.com/SuperBladesman/Volva/actions/workflows/tests.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24293731.svg)](https://doi.org/10.5281/zenodo.24293731)
 
 Most crystallite sizes in the literature come from the Scherrer equation, with the instrument's contribution taken off by subtracting full widths in quadrature. For Voigt-shaped peaks that shortcut is wrong. Völva's own 4.0 notebook used it, and on synthetic patterns it underestimated 20–200 nm crystallites by 7–35 %. For 2 µm crystallites it flagged every peak as resolution-limited, then still averaged them into a size of 124 nm. A size beyond the resolution of the instrument is not a size.
 
@@ -236,7 +237,7 @@ The current version is **4.1.3**. [CHANGELOG.md](CHANGELOG.md) describes each ch
 
 ## Citing Völva
 
-Please cite the version you used. Each tagged release will be archived on Zenodo with its own DOI; until the first one, cite the repository and the version (`volva-cli --version`). [CITATION.cff](CITATION.cff) has the details in machine-readable form, and GitHub's "Cite this repository" button reads it.
+Please cite the version you used (`volva-cli --version`). Each tagged release is archived on Zenodo with its own DOI; 4.1.3 is [10.5281/zenodo.24293732](https://doi.org/10.5281/zenodo.24293732). To cite Völva without a version, use the DOI for all versions, [10.5281/zenodo.24293731](https://doi.org/10.5281/zenodo.24293731), which always resolves to the latest. [CITATION.cff](CITATION.cff) has the details in machine-readable form, and GitHub's "Cite this repository" button reads it.
 
 ## Contributing
 
